@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>🎬 اختبار التقييمات</title>
+  <style>
+    body { font-family: Arial, sans-serif; direction: rtl; background: #f9f9f9; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h1 { text-align: center; }
+    .question { margin: 20px 0; padding: 10px; border-bottom: 1px solid #ddd; }
+    input { padding: 5px; width: 100px; }
+    button { padding: 10px 20px; margin-top: 10px; cursor: pointer; }
+    .result { margin-top: 20px; padding: 10px; background: #eee; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 اختبار التقييمات (الدرجة الكاملة 36/36)</h1>
+    <div id="quiz"></div>
+    <button onclick="checkAnswers()">عرض النتيجة</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const shows = {
+      "Game of Thrones": 9.6,
+      "Reacher": 8.1,
+      "The Punisher": 7.8,
+      "Vikings": 9.3,
+      "House of the Dragon": 7.4,
+      "The Walking Dead": 9.1,
+      "From": 8.1,
+      "The Penguin": 8.7,
+      "Squid Game": 7.0,
+      "La Casa de Papel": 7.5,
+      "Prison Break": 7.9,
+      "The Boys": 8.4
+    };
+
+    const quizDiv = document.getElementById("quiz");
+
+    // إنشاء الأسئلة
+    Object.keys(shows).forEach((show, i) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <label>📺 كم تقييم <b>${show}</b>؟ </label>
+        <input type="number" step="0.1" id="q${i}">
+      `;
+      quizDiv.appendChild(div);
+    });
+
+    function checkAnswers() {
+      let score = 0;
+      let mistakes = [];
+      let i = 0;
+
+      for (let show in shows) {
+        const correct = shows[show];
+        const answer = parseFloat(document.getElementById(`q${i}`).value) || 0;
+        const diff = Math.abs(answer - correct);
+
+        if (diff === 0) {
+          score += 3;
+        } else if (diff <= 0.1) {
+          score += 2;
+        } else if (diff <= 0.2) {
+          score += 1;
+        } else {
+          mistakes.push({show, correct, answer});
+        }
+        i++;
+      }
+
+      let resultHTML = `<h2>🔔 نتيجتك: ${score}/36</h2>`;
+
+      if (mistakes.length > 0) {
+        resultHTML += "<h3>الأخطاء اللي وقعت فيها:</h3><ul>";
+        mistakes.forEach(m => {
+          resultHTML += `<li> - ${m.show}: انت كتبت ${m.answer}, الصح ${m.correct}</li>`;
+        });
+        resultHTML += "</ul>";
+      } else {
+        resultHTML += "<p>🔥 ولا غلطة! حافظهم كلهم صح 👏</p>";
+      }
+
+      document.getElementById("result").innerHTML = resultHTML;
+    }
+  </script>
+</body>
+</html>
